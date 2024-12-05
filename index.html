@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motivos do Meu Amor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+            flex-direction: column;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        #start-screen {
+            display: flex;
+        }
+
+        .btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background-color: #ff4c4c;
+        }
+
+        .letters-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .letter {
+            width: 80px;
+            height: 80px;
+            background-color: #ff6b6b;
+            border: 2px solid white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .word-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .empty-slot {
+            width: 80px;
+            height: 80px;
+            background-color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Tela inicial -->
+    <div id="start-screen" class="screen">
+        <h1>Motivos pelo qual me fizeram me apaixonar por você tão rapidamente.</h1>
+        <button class="btn" onclick="showScreen('word-screen')">Seguir</button>
+    </div>
+
+    <!-- Tela do jogo de completar a palavra -->
+    <div id="word-screen" class="screen">
+        <h1>Complete a palavra que representa tudo o que você significa para mim.</h1>
+        <div class="letters-container" id="letters-container"></div>
+        <div class="word-container" id="word-container"></div>
+        <button class="btn" id="next-button" style="display:none;" onclick="showScreen('message-screen')">Próximo</button>
+    </div>
+
+    <!-- Tela intermediária com mensagem -->
+    <div id="message-screen" class="screen">
+        <h1>Amor possui apenas 4 letras, o tamanho dela é muito inferior ao que carrega dentro de si.</h1>
+        <button class="btn" onclick="showScreen('list-screen')">Descubra seu real significado</button>
+    </div>
+
+    <!-- Tela com os motivos -->
+    <div id="list-screen" class="screen">
+        <h1>Eis aqui os motivos pelo qual eu te amo:</h1>
+        <ul>
+            <li>A maneira como você sorri com os olhos e me abraça com um simples olhar, tornando o mundo mais acolhedor.</li>
+            <li>Seu humor "dúvidoso", que me faz rir mesmo nos momentos em que tudo parece sério demais.</li>
+            <li>A forma como você implica comigo, dizendo "eu te odeio" quando, na verdade, seu coração quer gritar o oposto.</li>
+            <li>Sua voz, que me faz derreter, seja ao dizer "eu te amo" ou ao pronunciar até o palavrão mais leve com tanto carinho.</li>
+            <li>Sua empatia, sempre disposta a me ouvir, tentando entender cada pedaço do que sou, sem julgamentos.</li>
+            <li>Sua generosidade, que vai além de tudo, compartilhando o que é seu, mesmo quando não é necessário.</li>
+            <li>A calma que você carrega dentro de si, equilibrando o turbilhão que às vezes sou.</li>
+            <li>Seu carinho, o toque suave que me arrepia, porque sei que é com você que quero estar.</li>
+            <li>O companheirismo que você oferece, sempre pronta para me ajudar, seja nas pequenas tarefas ou em algo grandioso, como pintar a minha casa.</li>
+            <li>Por ter chegado e, sem aviso, se instalado tão rápido em minha vida, tornando tudo mais leve e bonito.</li>
+        </ul>
+        <p>OBS.: Esse ainda não são todos os motivos, não sei como inserir mais, desculpe.</p>
+        <button class="btn" onclick="showScreen('apology-screen')">Seguinte</button>
+    </div>
+
+    <!-- Tela com pedido de desculpas -->
+    <div id="apology-screen" class="screen">
+        <h1>Me desculpe se te machuquei.</h1>
+        <button class="btn" onclick="showScreen('final-screen')">Continuar</button>
+    </div>
+
+    <!-- Tela final -->
+    <div id="final-screen" class="screen">
+        <h1>Você me perdoa?</h1>
+        <button class="btn" onclick="redirectToWhatsApp('eu te perdoo por ser babaca')">Aceito</button>
+        <button class="btn" onclick="redirectToWhatsApp('venha me encontrar em até 2h')">Não aceito</button>
+    </div>
+
+    <script>
+        const correctWord = ["A", "M", "O", "R"];
+        let currentWord = ["", "", "", ""];
+
+        // Exibir a próxima tela
+        function showScreen(screenId) {
+            document.querySelectorAll(".screen").forEach(screen => screen.style.display = "none");
+            document.getElementById(screenId).style.display = "flex";
+            if(screenId === 'word-screen') {
+                setupWordGame(); // Configurar o jogo de palavras
+            }
+        }
+
+        // Configurar o jogo de preencher a palavra
+        function setupWordGame() {
+            const lettersContainer = document.getElementById("letters-container");
+            const wordContainer = document.getElementById("word-container");
+
+            // Embaralhar as letras para mostrar
+            const shuffledLetters = [...correctWord].sort(() => Math.random() - 0.5);
+            lettersContainer.innerHTML = "";
+
+            // Exibir letras embaralhadas
+            shuffledLetters.forEach((letter, index) => {
+                const letterDiv = document.createElement("div");
+                letterDiv.classList.add("letter");
+                letterDiv.textContent = letter;
+                letterDiv.addEventListener("click", () => placeLetter(letter, index));
+                lettersContainer.appendChild(letterDiv);
+            });
+
+            // Criar os espaços vazios para a palavra
+            wordContainer.innerHTML = "";
+            currentWord.forEach((letter, index) => {
+                const emptySlot = document.createElement("div");
+                emptySlot.classList.add("empty-slot");
+                emptySlot.textContent = letter;
+                wordContainer.appendChild(emptySlot);
+            });
+        }
+
+        // Colocar uma letra no lugar correto
+        function placeLetter(letter, index) {
+            const emptySlotIndex = currentWord.indexOf("");
+            if (emptySlotIndex !== -1) {
+                currentWord[emptySlotIndex] = letter;
+                updateWordDisplay();
+                checkWord();
+            }
+        }
+
+        // Atualizar a exibição da palavra
+        function updateWordDisplay() {
+            const wordContainer = document.getElementById("word-container");
+            wordContainer.innerHTML = "";
+            currentWord.forEach(letter => {
+                const emptySlot = document.createElement("div");
+                emptySlot.classList.add("empty-slot");
+                emptySlot.textContent = letter;
+                wordContainer.appendChild(emptySlot);
+            });
+        }
+
+        // Verificar se a palavra está correta
+        function checkWord() {
+            if (currentWord.join("") === correctWord.join("")) {
+                document.getElementById("next-button").style.display = "block";
+            } else {
+                document.getElementById("next-button").style.display = "none";
+            }
+        }
+
+        // Redirecionar para o WhatsApp
+        function redirectToWhatsApp(message) {
+            const phone = "5511977190671";
+            window.location.href = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+        }
+    </script>
+</body>
+</html>
